@@ -35,6 +35,16 @@ covid['date'] = pd.to_datetime(covid['date'])
 #covid = covid.drop_duplicates('location', keep='last') # drops every row except most recent listing
 
 def Covidiso(iso_code, covid):
+    """
+    This function takes the covid dataframe and deletes all the useless columns and rows of each country we do not wish to see.
+    It groups the data based on year and returns the dataframe only containing the most recent entry for each year
+    for the country we wish to see.
+    :param iso_code: This variable represents the iso code of the country we wish to use.
+    It is a user generated variable created through input.
+    :param covid: Covid is the covid dataframe generated before the function and main.
+    It must be passed to be recognized within the function.
+    :return: Edited dataframe, will be of size (3 rows, 4 columns)
+    """
 
     rows_to_drop = ['World', 'International', 'Hong Kong']
 
@@ -84,6 +94,13 @@ def Covidiso(iso_code, covid):
 #covid = Covidiso('IRN', covid)
 
 def Countryset(iso_code, df):
+    """
+    This function adds the 2022 SDG data to the existing backdated data for the country
+    specified through iso code variable.
+    :param iso_code: User specified iso code corresponding with country they wish to use.
+    :param df: Dataframe holding backdated data.
+    :return: Edited dataframe with new row for year 2022 and cols3 which is simply list of columns in dataframe.
+    """
     Country = df[df.iso_code == iso_code]
     Country.columns
 
@@ -100,12 +117,23 @@ def Countryset(iso_code, df):
 #next, cols3 = Countryset('IRN', Backdate)
 
 def Corrgoals(df, cols):
+    """
+    Create a correlation matrix between all columns in df
+    :param df: Dataframe holding country and SDG data
+    :param cols: list of columns in df (in our case cols3)
+    :return: N/A
+    """
     plt.figure(figsize=[16,8])
     sbn.heatmap(df[cols].corr(), annot=True, cmap = 'viridis')
 
 #Corrgoals(next, cols3)
 
 def Plotgoals(df):
+    """
+    Plot a line chart, one line for each goal in data with year on X axis.
+    :param df: Dataframe holding country and SDG data
+    :return: N/A
+    """
     goal = 1
     colo = ["", "xkcd:purple", "xkcd:green", "xkcd:blue", "xkcd:pink", "xkcd:brown", "xkcd:red", "xkcd:light blue", "xkcd:teal", "xkcd:orange", "xkcd:light green", "xkcd:magenta",
             "xkcd:yellow", "xkcd:grey", "xkcd:lime green", "xkcd:light purple", "xkcd:dark green", "xkcd:dark gold"]
@@ -134,6 +162,11 @@ def Plotgoals(df):
 #next.describe()
 
 def Plotindependent(df):
+    """
+    Plot the goal scores for each year in their own independent subplot.
+    :param df: Dataframe holding country and SDG data
+    :return: N/A
+    """
     fig, axs = plt.subplots(3, 5, figsize=(8, 5), constrained_layout=True,
                             sharex=True, sharey=True)
     column = []
@@ -161,6 +194,12 @@ def Plotindependent(df):
 #Plotindependent(next)
 #print(covid)
 def Plotcov(next, covid):
+    """
+    Plot the same graph as Plotgoals with the addition of the covid data.
+    :param next: Dataframe containing country and SDG data.
+    :param covid: Dataframe containing covid data for country.
+    :return: N/A
+    """
     next = next.merge(covid, on='Year', how='outer')
     next.head(23)
 
