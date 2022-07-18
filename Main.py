@@ -62,7 +62,7 @@ def Covidiso(iso_code, covid):
                     'total_vaccinations	people_vaccinated', 'total_boosters', 'new_vaccinations',
                     'new_people_vaccinated_smoothed_per_hundred', 'population',
                     'total_tests', 'total_tests_per_thousand', 'total_vaccinations', 'people_vaccinated']
-    
+
     covid = covid[covid.iso_code == iso_code]
     covid.date = pd.DatetimeIndex(covid.date).year
     covid = covid.drop_duplicates('date', keep='last')
@@ -79,14 +79,15 @@ def Covidiso(iso_code, covid):
     print(covid.shape)
     covid.rename(columns={'date':'Year'}, inplace=True)
     covid.head(10)
+    return covid
 
-Covidiso('IRN', covid)
+#covid = Covidiso('IRN', covid)
 
 def Countryset(iso_code, df):
-    Country = df[df.iso_code == 'IRN']
+    Country = df[df.iso_code == iso_code]
     Country.columns
 
-    Iran2022 = SDG2022[SDG2022.iso_code == 'IRN']
+    Iran2022 = SDG2022[SDG2022.iso_code == iso_code]
     next = pd.concat([Country, Iran2022], axis=0)
     next['Year'] = next['Year'].fillna(2022.0)
     next['Population'] = next['Population'].fillna(85028760.0)
@@ -96,7 +97,7 @@ def Countryset(iso_code, df):
     cols3 = next.columns
     return next, cols3
 
-next, cols3 = Countryset('IRN', Backdate)
+#next, cols3 = Countryset('IRN', Backdate)
 
 def Corrgoals(df, cols):
     plt.figure(figsize=[16,8])
@@ -111,10 +112,10 @@ def Plotgoals(df):
 
 
     plt.figure(figsize=[16,8])
-    for i in next.columns:
+    for i in df.columns:
       if 'Goal' in i:
         current = 'Goal ' + str(goal)
-        plt.plot(df['Year'], next[i], label=current, color=colo[goal])
+        plt.plot(df['Year'], df[i], label=current, color=colo[goal])
         goal += 1
 
 
@@ -130,10 +131,10 @@ def Plotgoals(df):
     plt.show()
 
 #Plotgoals(next)
-next.describe()
+#next.describe()
 
 def Plotindependent(df):
-    fig, axs = plt.subplots(3, 5, figsize=(16, 10), constrained_layout=True,
+    fig, axs = plt.subplots(3, 5, figsize=(8, 5), constrained_layout=True,
                             sharex=True, sharey=True)
     column = []
     goals = []
@@ -146,7 +147,7 @@ def Plotindependent(df):
         column = goals[nn]
         column_rec_name = column.replace('\n', '_').replace(' ', '_')
 
-        line, = ax.plot('Year', column, data=next, lw=2.5)
+        line, = ax.plot('Year', column, data=df, lw=2.5)
         ax.set_title(column, fontsize='small', loc='left')
         ax.set_ylim([0, 100])
         ax.grid()
@@ -158,42 +159,60 @@ def Plotindependent(df):
 
 
 #Plotindependent(next)
-print(covid)
+#print(covid)
+def Plotcov(next, covid):
+    next = next.merge(covid, on='Year', how='outer')
+    next.head(23)
 
-# next = next.merge(covid, on='Year', how='outer')
-# next.head(23)
-#
-# goal = 1
-# colo = ["", "xkcd:purple", "xkcd:green", "xkcd:blue", "xkcd:pink", "xkcd:brown", "xkcd:red", "xkcd:light blue",
-#         "xkcd:teal", "xkcd:orange", "xkcd:light green", "xkcd:magenta",
-#         "xkcd:yellow", "xkcd:grey", "xkcd:lime green", "xkcd:light purple", "xkcd:dark green", "xkcd:dark gold"]
-#
-# plt.figure(figsize=[16, 8])
-# next['total_cases'] = next['total_cases'].fillna(0)
-#
-# next['total_cases'] = (next['total_cases'] - next['total_cases'].min()) / (
-#             next['total_cases'].max() - next['total_cases'].min()) * 100
-# print(next['total_cases'])
-# # next['total_cases'] = (next.total_cases–mincases) / (maxcases–mincases) * 100
-# plt.plot(next['Year'], next['total_cases'], label='Cases', color="xkcd:black")
-#
-# for i in next.columns:
-#     if 'Goal' in i:
-#         current = 'Goal ' + str(goal)
-#         plt.plot(next['Year'], next[i], label=current, color=colo[goal])
-#         goal += 1
-#         # plt.plot(next['Year'], next['total_cases'], label="Cases", color="xkcd:black")
-#
-# font = {'family': 'serif',
-#         'color': 'darkred',
-#         'weight': 'normal',
-#         'size': 20,
-#         }
-# plt.xticks(np.arange(min(next["Year"]), max(next["Year"]) + 1, 1.0))
-# plt.xlabel("Years", fontdict=font)
-# plt.ylabel("Goal Score", fontdict=font)
-# plt.grid()
-# plt.legend()
-# plt.show()
+    goal = 1
+    colo = ["", "xkcd:purple", "xkcd:green", "xkcd:blue", "xkcd:pink", "xkcd:brown", "xkcd:red", "xkcd:light blue",
+            "xkcd:teal", "xkcd:orange", "xkcd:light green", "xkcd:magenta",
+            "xkcd:yellow", "xkcd:grey", "xkcd:lime green", "xkcd:light purple", "xkcd:dark green", "xkcd:dark gold"]
+
+    plt.figure(figsize=[16, 8])
+    next['total_cases'] = next['total_cases'].fillna(0)
+
+    next['total_cases'] = (next['total_cases'] - next['total_cases'].min()) / (
+                next['total_cases'].max() - next['total_cases'].min()) * 100
+    print(next['total_cases'])
+    # next['total_cases'] = (next.total_cases–mincases) / (maxcases–mincases) * 100
+    plt.plot(next['Year'], next['total_cases'], label='Cases', color="xkcd:black")
+
+    for i in next.columns:
+        if 'Goal' in i:
+            current = 'Goal ' + str(goal)
+            plt.plot(next['Year'], next[i], label=current, color=colo[goal])
+            goal += 1
+            # plt.plot(next['Year'], next['total_cases'], label="Cases", color="xkcd:black")
+
+    font = {'family': 'serif',
+            'color': 'darkred',
+            'weight': 'normal',
+            'size': 20,
+            }
+    plt.xticks(np.arange(min(next["Year"]), max(next["Year"]) + 1, 1.0))
+    plt.xlabel("Years", fontdict=font)
+    plt.ylabel("Goal Score", fontdict=font)
+    plt.grid()
+    plt.legend()
+    plt.show()
+
+def main(cov, Backdate):
+    iso = input('Please enter the 3 letter iso code of your country')
+    iso = iso.upper()
+    print(iso)
+    if len(iso) != 3:
+        print("The iso code you entered is invalid")
+        main()
+    else:
+        covid = Covidiso(iso, cov)
+        next, cols3 = Countryset(iso, Backdate)
+        Corrgoals(next, cols3)
+        Plotgoals(next)
+        Plotindependent(next)
+        Plotcov(next, covid)
 
 
+
+if __name__ == "__main__":
+    main(covid, Backdate)
