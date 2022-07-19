@@ -8,6 +8,7 @@ from altair import Chart, X, Y, Color, Scale
 import altair as alt
 import matplotlib.pyplot as plt
 import numpy as np
+import xlrd
 
 SDG2022 = pd.read_excel(r'C:\Users\cooperd\PycharmProjects\GSTR410\SDR-2022-database.xlsx', sheet_name="SDR2022 Data")
 Backdate = pd.read_excel(r'C:\Users\cooperd\PycharmProjects\GSTR410\SDR-2022-database.xlsx', sheet_name="Backdated SDG Index")
@@ -93,7 +94,7 @@ def Covidiso(iso_code, covid):
 
 #covid = Covidiso('IRN', covid)
 
-def Countryset(iso_code, df):
+def Countryset(iso_code, df, GDP=False):
     """
     This function adds the 2022 SDG data to the existing backdated data for the country
     specified through iso code variable.
@@ -101,6 +102,12 @@ def Countryset(iso_code, df):
     :param df: Dataframe holding backdated data.
     :return: Edited dataframe with new row for year 2022 and cols3 which is simply list of columns in dataframe.
     """
+    if GDP != False:
+        GDP = pd.read_excel(r"C:\Users\cooperd\PycharmProjects\GSTR410\API_NY.GDP.MKTP.CD_DS2_en_excel_v2_4251142.xls", sheet_name="Data")
+        GDP.rename(columns={'Country Code': 'iso_code'}, inplace=True)
+        GDP = GDP[GDP.iso_code == iso_code]
+        print(GDP.head())
+
     Country = df[df.iso_code == iso_code]
     Country.columns
 
@@ -109,7 +116,7 @@ def Countryset(iso_code, df):
     next['Year'] = next['Year'].fillna(2022.0)
     next['Population'] = next['Population'].fillna(85028760.0)
     next.dropna(axis=1, inplace=True)
-    next.tail(5)
+    #next.tail(5)
 
     cols3 = next.columns
     return next, cols3
@@ -245,11 +252,11 @@ def main(cov, Backdate):
         main()
     else:
         covid = Covidiso(iso, cov)
-        next, cols3 = Countryset(iso, Backdate)
-        Corrgoals(next, cols3)
-        Plotgoals(next)
-        Plotindependent(next)
-        Plotcov(next, covid)
+        next, cols3 = Countryset(iso, Backdate, GDP=True)
+        # Corrgoals(next, cols3)
+        # Plotgoals(next)
+        # Plotindependent(next)
+        # Plotcov(next, covid)
 
 
 
