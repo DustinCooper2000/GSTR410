@@ -106,7 +106,18 @@ def Countryset(iso_code, df, GDP=False):
         GDP = pd.read_excel(r"C:\Users\cooperd\PycharmProjects\GSTR410\API_NY.GDP.MKTP.CD_DS2_en_excel_v2_4251142.xls", sheet_name="Data")
         GDP.rename(columns={'Country Code': 'iso_code'}, inplace=True)
         GDP = GDP[GDP.iso_code == iso_code]
-        print(GDP.head())
+        listcols = GDP.columns.tolist()
+        listvals = GDP.values.tolist()
+        listvals = listvals[0]
+        listvals.pop(0)
+        listcols.pop(0)
+        #print(listvals)
+        new_df = pd.DataFrame(columns=["GDP"], index=listcols, data=listvals, dtype=float)
+        new_df["Year"] = new_df.index
+        new_df = new_df.astype(float)
+        print(new_df.GDP)
+        # transposed_GDP = GDP.transpose(copy=True)
+        # print(transposed_GDP.columns)
 
     Country = df[df.iso_code == iso_code]
     Country.columns
@@ -117,13 +128,15 @@ def Countryset(iso_code, df, GDP=False):
     next['Population'] = next['Population'].fillna(85028760.0)
     next.dropna(axis=1, inplace=True)
     #next.tail(5)
-
+    #print(next.dtypes)
+    next = next.merge(new_df, on="Year", how="outer")
+    #print(next.columns)
     cols3 = next.columns
     return next, cols3
 
 #next, cols3 = Countryset('IRN', Backdate)
 
-def Corrgoals(df, cols):
+def Corrgoals(df, cols, iso):
     """
     Create a correlation matrix between all columns in df
     :param df: Dataframe holding country and SDG data
@@ -132,6 +145,10 @@ def Corrgoals(df, cols):
     """
     plt.figure(figsize=[16,8])
     sbn.heatmap(df[cols].corr(), annot=True, cmap = 'viridis')
+    #plt.show()
+    filepath = r"C:\Users\cooperd\PycharmProjects\GSTR410\FigImages" + str(iso) + "corr"
+    #print(filepath)
+    plt.savefig(filepath)
 
 #Corrgoals(next, cols3)
 
@@ -253,7 +270,7 @@ def main(cov, Backdate):
     else:
         covid = Covidiso(iso, cov)
         next, cols3 = Countryset(iso, Backdate, GDP=True)
-        # Corrgoals(next, cols3)
+        Corrgoals(next, cols3, iso)
         # Plotgoals(next)
         # Plotindependent(next)
         # Plotcov(next, covid)
