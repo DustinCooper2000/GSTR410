@@ -146,13 +146,13 @@ def Corrgoals(df, cols, iso):
     plt.figure(figsize=[16,8])
     sbn.heatmap(df[cols].corr(), annot=True, cmap = 'viridis')
     #plt.show()
-    filepath = r"C:\Users\cooperd\PycharmProjects\GSTR410\FigImages" + str(iso) + "corr"
+    filepath = r"C:\Users\cooperd\PycharmProjects\GSTR410\FigImages\ " + str(iso) + "corr"
     #print(filepath)
     plt.savefig(filepath)
 
 #Corrgoals(next, cols3)
 
-def Plotgoals(df):
+def Plotgoals(df, iso):
     """
     Plot a line chart, one line for each goal in data with year on X axis.
     :param df: Dataframe holding country and SDG data
@@ -180,12 +180,14 @@ def Plotgoals(df):
     plt.xlabel("Years", fontdict=font)
     plt.ylabel("Goal Score", fontdict=font)
     plt.legend()
-    plt.show()
+    filepath = r"C:\Users\cooperd\PycharmProjects\GSTR410\FigImages\ " + str(iso) + "goals"
+    plt.savefig(filepath)
+    #plt.show()
 
 #Plotgoals(next)
 #next.describe()
 
-def Plotindependent(df):
+def Plotindependent(df, iso):
     """
     Plot the goal scores for each year in their own independent subplot.
     :param df: Dataframe holding country and SDG data
@@ -211,13 +213,15 @@ def Plotindependent(df):
 
     # fig.supxlabel('Year')
     # fig.supylabel('Goal Score')
-
-    plt.show()
+    filepath = r"C:\Users\cooperd\PycharmProjects\GSTR410\FigImages\ " + str(iso) + "independent"
+    # print(filepath)
+    plt.savefig(filepath)
+    #plt.show()
 
 
 #Plotindependent(next)
 #print(covid)
-def Plotcov(next, covid):
+def Plotcov(next, covid, iso):
     """
     Plot the same graph as Plotgoals with the addition of the covid data.
     :param next: Dataframe containing country and SDG data.
@@ -258,7 +262,10 @@ def Plotcov(next, covid):
     plt.ylabel("Goal Score", fontdict=font)
     plt.grid()
     plt.legend()
-    plt.show()
+    filepath = r"C:\Users\cooperd\PycharmProjects\GSTR410\FigImages\ " + str(iso) + "covid"
+    # print(filepath)
+    plt.savefig(filepath)
+    #plt.show()
 
 def main(cov, Backdate):
     iso = input('Please enter the 3 letter iso code of your country')
@@ -271,9 +278,9 @@ def main(cov, Backdate):
         covid = Covidiso(iso, cov)
         next, cols3 = Countryset(iso, Backdate, GDP=True)
         Corrgoals(next, cols3, iso)
-        # Plotgoals(next)
-        # Plotindependent(next)
-        # Plotcov(next, covid)
+        Plotgoals(next, iso)
+        Plotindependent(next, iso)
+        Plotcov(next, covid, iso)
 
 
 
