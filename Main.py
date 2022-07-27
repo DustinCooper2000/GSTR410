@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import xlrd
 
-SDG2022 = pd.read_excel(r'C:\Users\cooperd\PycharmProjects\GSTR410\SDR-2022-database.xlsx', sheet_name="SDR2022 Data")
-Backdate = pd.read_excel(r'C:\Users\cooperd\PycharmProjects\GSTR410\SDR-2022-database.xlsx', sheet_name="Backdated SDG Index")
+SDG2022 = pd.read_excel(r'./SDR-2022-database.xlsx', sheet_name="SDR2022 Data")
+Backdate = pd.read_excel(r'./SDR-2022-database.xlsx', sheet_name="Backdated SDG Index")
 #new = SDG2022[['Country Code ISO3', 'Country', 'Regions used for the SDR', '2022 SDG Index Score', 'Population in 2021', 'Goal 7 Score', 'Goal 13 Score', 'Goal 7 Regional Score', 'Goal 13 Regional Score']].copy()
 
 # Drop any country with a non recorded value
@@ -28,7 +28,7 @@ print(Backdatecols)
 
 # Data set and code used in this cell was recovered from a project
 # I completed for CSC 328 (Data Analytics) as a group alongside Bryar Frank and Anthony Wafula
-covid = pd.read_csv(r'C:\Users\cooperd\PycharmProjects\GSTR410\owid-covid-data (1).csv')
+covid = pd.read_csv(r'./owid-covid-data (1).csv')
 
 
 covid['date'] = pd.to_datetime(covid['date'])
